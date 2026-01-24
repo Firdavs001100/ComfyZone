@@ -1,44 +1,59 @@
+import {
+  ProductType,
+  ProductCategory,
+  ProductStatus,
+} from "../enums/products.enum";
 import { ObjectId } from "mongoose";
-import { ProductCollection, ProductStatus } from "../enums/products.enum";
 
 export interface Product {
   _id: ObjectId;
   productStatus: ProductStatus;
-  productCollection: ProductCollection;
   productName: string;
-  productPrice: number;
-  productLeftCount: number;
-  productSize: string;
-  productVolume: number;
   productDesc?: string;
+  productSlug: string;
+  productPrice: number;
+  productSalePrice?: number;
+  productCategory: ProductCategory;
+  productType: ProductType;
+  productMaterial?: string;
+  productColor: string;
   productImages: string[];
+  productStockCount: number;
   productViews: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ProductInput {
   productStatus?: ProductStatus;
-  productCollection: ProductCollection;
   productName: string;
-  productPrice: number;
-  productLeftCount: number;
-  productSize?: string;
-  productVolume?: number;
   productDesc?: string;
+  productSlug?: string;
+  productPrice: number;
+  productSalePrice?: number;
+  productCategory: ProductCategory;
+  productType: ProductType;
+  productMaterial?: string;
+  productColor: string;
   productImages?: string[];
+  productStockCount: number;
   productViews?: number;
 }
 
 export interface ProductUpdateInput {
   _id: ObjectId;
   productStatus?: ProductStatus;
-  productCollection?: ProductCollection;
   productName?: string;
-  productPrice?: number;
-  productLeftCount?: number;
-  productSize?: string;
-  productVolume?: number;
   productDesc?: string;
+  productSlug?: string;
+  productPrice?: number;
+  productSalePrice?: number;
+  productCategory?: ProductCategory;
+  productType?: ProductType;
+  productMaterial?: string;
+  productColor?: string;
   productImages?: string[];
+  productStockCount?: number;
   productViews?: number;
 }
 
@@ -46,6 +61,6 @@ export interface ProductInquiry {
   order: string;
   page: number;
   limit: number;
-  productCollection?: ProductCollection;
+  productCategory?: ProductCategory;
   search?: string;
 }

@@ -4,8 +4,8 @@ import { ViewGroup } from "../enums/views.enum";
 export interface View {
   _id: ObjectId;
   viewGroup: ViewGroup;
-  memberId: ObjectId;
   viewRefId: ObjectId;
+  memberId: ObjectId;
   createdAt: Date;
   uptatedAt: Date;
 }

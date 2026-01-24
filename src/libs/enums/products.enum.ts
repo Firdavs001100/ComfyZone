@@ -1,28 +1,51 @@
 export enum ProductStatus {
-    PAUSE = "PAUSE",
-    PROCESS = "PROCESS",
-    DELETE = "DELETE"
+  ACTIVE = "ACTIVE",
+  DRAFT = "DRAFT",
+  OUT_OF_STOCK = "OUT_OF_STOCK",
+  HIDDEN = "HIDDEN",
+  DISCONTINUED = "DISCONTINUED",
 }
 
-export enum ProductCollection {
-    DISH = "DISH",
-    SALAD = "SALAD",
-    DESERT = "DESERT",
-    DRINK = "DRINK",
-    OTHER = "OTHER"
+export enum ProductCategory {
+  LIVING_ROOM = "LIVING_ROOM",
+  BEDROOM = "BEDROOM",
+  DINING_ROOM = "DINING_ROOM",
+  OFFICE = "OFFICE",
+  OUTDOOR = "OUTDOOR",
+  KIDS = "KIDS",
+  ENTRYWAY = "ENTRYWAY",
+  STORAGE = "STORAGE",
+  OTHER = "OTHER",
 }
 
-export enum ProductSize {
-    SMALL = "SMALL",
-    NORMAL = "NORMAL",
-    LARGE = "LARGE",
-    SET = "SET"
-}
+export enum ProductType {
+  SOFA = "SOFA",
+  SECTIONAL = "SECTIONAL",
+  ARMCHAIR = "ARMCHAIR",
+  COFFEE_TABLE = "COFFEE_TABLE",
+  SIDE_TABLE = "SIDE_TABLE",
+  TV_STAND = "TV_STAND",
 
-export enum ProductVolume {
-    HALF = 0.5,
-    ONE = 1,
-    ONE_POINT_TWO = 1.2,
-    ONE_POINT_FIVE = 1.5,
-    TWO = 2
+  BED = "BED",
+  MATTRESS = "MATTRESS",
+  WARDROBE = "WARDROBE",
+  NIGHTSTAND = "NIGHTSTAND",
+  DRESSER = "DRESSER",
+
+  DINING_TABLE = "DINING_TABLE",
+  DINING_CHAIR = "DINING_CHAIR",
+  BAR_STOOL = "BAR_STOOL",
+
+  DESK = "DESK",
+  OFFICE_CHAIR = "OFFICE_CHAIR",
+  BOOKSHELF = "BOOKSHELF",
+  FILING_CABINET = "FILING_CABINET",
+
+  BENCH = "BENCH",
+  CONSOLE_TABLE = "CONSOLE_TABLE",
+  SHOE_RACK = "SHOE_RACK",
+
+  OUTDOOR_CHAIR = "OUTDOOR_CHAIR",
+  OUTDOOR_TABLE = "OUTDOOR_TABLE",
+  SUN_LOUNGER = "SUN_LOUNGER",
 }

@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    /* === Core Settings === */
+    "target": "ES2020",                   // Output JS version
+    "module": "commonjs",                 // Module system (use "ESNext" for ESM)
+    "lib": ["ES2020", "DOM"],             // Include modern JS + browser APIs
+    "outDir": "./dist",                   // Compiled JS output directory
+    "rootDir": "./src",                   // Source directory
+
+    /* === Strict Type-Checking === */
+    "strict": true,                       // Enable all strict type-checking options
+    "noImplicitAny": true,                // Disallow variables with implicit 'any'
+    "strictNullChecks": true,             // Ensure null and undefined are handled
+    "strictFunctionTypes": true,          // Enforce function parameter compatibility
+    "strictBindCallApply": true,          // Check 'bind', 'call', 'apply' correctly
+
+    /* === Module Resolution === */
+    "moduleResolution": "node",           // Node-style resolution
+    "esModuleInterop": true,              // Allow default imports from CommonJS
+    "forceConsistentCasingInFileNames": true, // Prevent case mismatches in imports
+    "resolveJsonModule": true,            // Allow importing JSON files
+    "allowSyntheticDefaultImports": true, // Allow default imports even if not declared
+
+    /* === Source Maps & Debugging === */
+    "sourceMap": true,                    // Generate .map files for debugging
+    "removeComments": false,              // Keep comments in compiled output
+    "skipLibCheck": true,                 // Skip type checks of declaration files
+
+    /* === Optional Quality of Life === */
+    "allowJs": false,                     // (true if mixing JS and TS)
+    "noEmitOnError": true,                // Don’t output JS if compilation fails
+    "baseUrl": "./",                      // Base for non-relative imports
+    "paths": {                            // Custom import aliases (optional)
+      "@/*": ["src/*"]
+    }
+  },
+
+  /* === File Inclusion === */
+  "include": ["src"],                     // Include source directory
+  "exclude": ["node_modules", "dist"]     // Exclude build artifacts
+}

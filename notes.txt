@@ -1,0 +1,20 @@
+.                                           Pattern types: Architectural vs Design
+
+Architectural pattern: MVC(MODEL VIEW CONTROLLER), DI(Dependency Injection), MVP(Frontend)
+⤷ desc: Skeleton of our backend. It helps us to manage and organize our project(information flow in it)
+
+Design pattern: Middleware, Decorator 
+⤷ desc: It helps us to manage only certain parts of our project, not whole.
+
+--------
+
+
+Project Standards:
+⤷
+    - Logging Standards:
+    - Naming Standards:
+        function, method(), variables => CAMEL
+        class => PASCAL
+        folder, file => KEBAB
+        css => SNAKE
+    - Error Handling Standards:

@@ -1,45 +1,185 @@
-<%- include('includes/header') %>
-
-<link rel="stylesheet" type="text/css" href="/css/login.css" />
-
-<body>
-  <form class="login-container" action="/admin/login" METHOD="POST">
-    <div class="login-frame">
-      <div class="login-top">
-        <span>Enter</span>
-        <div>Go back <a href="/admin" style="color: #6440fb">Home</a></div>
-        <p>
-          Not registered yet?
-          <a href="/admin/signup" style="color: #6440fb">Signup</a>
-        </p>
-      </div>
-      <div class="login-input-frame">
-        <div class="login-input-container">
-          <label>Restaurant *</label>
-          <input
-            type="text"
-            name="memberNick"
-            class="member-nick"
-            placeholder="Username"
-            value=""
-            required
-          />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <title>Login - Admin Panel</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f9f1e7">
+    <div
+      style="
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      "
+    >
+      <div style="max-width: 28rem; width: 100%">
+        <div style="text-align: center; margin-bottom: 2rem">
+          <h1
+            style="
+              font-size: 2.25rem;
+              font-weight: bold;
+              color: #111827;
+              margin-bottom: 0.75rem;
+            "
+          >
+            Welcome Back
+          </h1>
+          <p style="font-size: 1.125rem; color: #6b7280">
+            Sign in to your admin account
+          </p>
         </div>
-        <div class="login-input-container">
-          <label>Password *</label>
-          <input
-            type="password"
-            name="memberPassword"
-            class="member-password"
-            placeholder="Password"
-            value=""
-            required
-          />
+
+        <div
+          style="
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            padding: 2rem;
+          "
+        >
+          <form
+            action="/admin/login"
+            method="POST"
+            style="display: flex; flex-direction: column; gap: 1.5rem"
+          >
+            <div>
+              <label
+                for="memberNick"
+                style="
+                  display: block;
+                  font-size: 0.875rem;
+                  font-weight: 600;
+                  color: #374151;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                Username
+              </label>
+              <input
+                id="memberNick"
+                name="memberNick"
+                type="text"
+                placeholder="Enter your username"
+                required
+                style="
+                  width: 100%;
+                  padding: 0.75rem 1rem;
+                  border: 1px solid #d1d5db;
+                  border-radius: 0.5rem;
+                  outline: none;
+                "
+              />
+            </div>
+
+            <div>
+              <label
+                for="memberPassword"
+                style="
+                  display: block;
+                  font-size: 0.875rem;
+                  font-weight: 600;
+                  color: #374151;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                Password
+              </label>
+              <input
+                id="memberPassword"
+                name="memberPassword"
+                type="password"
+                placeholder="••••••••"
+                required
+                style="
+                  width: 100%;
+                  padding: 0.75rem 1rem;
+                  border: 1px solid #d1d5db;
+                  border-radius: 0.5rem;
+                  outline: none;
+                "
+              />
+            </div>
+
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <label style="display: flex; align-items: center">
+                <input
+                  type="checkbox"
+                  style="
+                    width: 1rem;
+                    height: 1rem;
+                    border: 1px solid #d1d5db;
+                    border-radius: 0.25rem;
+                  "
+                />
+                <span
+                  style="
+                    margin-left: 0.5rem;
+                    font-size: 0.875rem;
+                    color: #6b7280;
+                  "
+                  >Remember me</span
+                >
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              style="
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 0.75rem 1rem;
+                background: #d97706;
+                color: white;
+                border-radius: 0.5rem;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 1.125rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <i
+                data-lucide="log-in"
+                style="width: 1.25rem; height: 1.25rem"
+              ></i>
+              Sign In
+            </button>
+          </form>
+
+          <div style="margin-top: 1.5rem; text-align: center">
+            <span style="color: #6b7280">Don't have an account? </span>
+            <a
+              href="/admin/signup"
+              style="color: #d97706; font-weight: 600; text-decoration: none"
+            >
+              Sign up
+            </a>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center">
+          <a
+            href="/admin"
+            style="color: #6b7280; font-weight: 500; text-decoration: none"
+          >
+            ← Back to Home
+          </a>
         </div>
       </div>
-      <button class="login-btn btn" name="login" type="submit">Login</button>
     </div>
-  </form>
-</body>
 
-<%- include('includes/footer') %>
+    <%- include('partials/scripts') %>
+  </body>
+</html>

@@ -4,9 +4,11 @@ import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/member";
 import { MemberType } from "../libs/enums/member.enum";
 import Errors, { HttpCode, Message } from "..//libs/Errors";
+import DashboardService from "../models/Dashboard.service";
 
 const adminController: T = {},
-  memberService = new MemberService();
+  memberService = new MemberService(),
+  dashboardService = new DashboardService();
 
 /** ADMIN related methods */
 adminController.goHome = (req: Request, res: Response) => {
@@ -83,7 +85,7 @@ adminController.processLogin = async (req: AdminRequest, res: Response) => {
     const message =
       err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
     res.send(
-      `<script>alert("${message}"); window.location.replace('/admin/signup')</script>`,
+      `<script>alert("${message}"); window.location.replace('/admin/login')</script>`,
     );
   }
 };
@@ -109,6 +111,18 @@ adminController.updateChosenUser = async (req: Request, res: Response) => {
     res.status(HttpCode.OK).json({ data: result });
   } catch (err) {
     console.log("Error, updateChosenUser: ", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
+  }
+};
+
+adminController.getDashboard = async (req: Request, res: Response) => {
+  try {
+    console.log("getDashboard");
+    const dashboardData = await dashboardService.getDashboardData();
+    res.render("dashboard", dashboardData);
+  } catch (err) {
+    console.log("Error, getDashboard: ", err);
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }

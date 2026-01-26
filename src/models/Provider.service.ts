@@ -54,6 +54,21 @@ class ProviderService {
     return result;
   }
 
+  public async deleteProvider(id: string): Promise<Provider> {
+    const _id = shapeIntoMongooseObjectId(id);
+
+    const result = await this.providerModel
+      .findByIdAndDelete(_id)
+      .lean<Provider>()
+      .exec();
+
+    if (!result) {
+      throw new Errors(HttpCode.NOT_FOUND, Message.DELETE_FAILED);
+    }
+
+    return result;
+  }
+
   // user
   public async getProvider(id: string): Promise<Provider> {
     const _id = shapeIntoMongooseObjectId(id);

@@ -1,87 +1,164 @@
-<%- include('includes/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>Users - Admin Panel</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #F9F1E7; overflow: hidden;">
+  
+  <div style="display: flex; height: 100vh;">
+    <%- include('partials/sidebar', { currentPage: 'users' }) %>
+    
+    <!-- Main Content -->
+    <div style="flex: 1; overflow: auto;">
+      <div style="padding: 2rem;">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.875rem; font-weight: bold; color: #111827; margin-bottom: 0.5rem;">Users</h1>
+          <p style="color: #6B7280; margin: 0;">Manage user accounts and permissions • <span style="color: #D97706; font-weight: 500;"><%= users ? users.length : 0 %> Total</span></p>
+        </div>
 
-<link rel="stylesheet" type="text/css" href="/css/users.css" />
+        <!-- Search Bar -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="position: relative; max-width: 28rem;">
+            <i data-lucide="search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF; width: 1.25rem; height: 1.25rem;"></i>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search users..."
+              style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.5rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none;"
+            />
+          </div>
+        </div>
 
-<body>
-  <div class="users-container">
-    <% if(!member) { %>
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/signup">SignUp</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/login">Login</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="users-frame" style="color: #dddddd">
-      <div class="board" style="font-size: 40px">Please login first!</div>
-    </div>
-
-    <% } else { %>
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/product/all">Menu</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/users/all">Users</a>
-        </li>
-        <li
-          class="nav-item"
-          style="cursor: pointer"
-          onclick="return confirm('Do you really want to logout?')"
-        >
-          <a class="nav-link" href="/admin/logout">Logout</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="users-frame">
-      <div class="board">
-        <div class="user-table">
-          <span class="header-name" style="margin-bottom: 30px"
-            >All Users List</span
-          >
-          <table class="table table-hover table-sm">
-            <thead class="thead-light">
-              <tr class="thead-light">
-                <th scope="col">No</th>
-                <th scope="col">Name</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <% users.map((user, index) => { %>
-            <tbody style="background: white">
-              <td><%= index + 1 %></td>
-              <td><%= user.memberNick %></td>
-              <td><%= user.memberPhone %></td>
-              <td style="width: 13%">
-                <select class="spec-select member-status" id="<%= user._id %>">
-                  <option value="ACTIVE" <%= user.memberStatus === "ACTIVE" ? "selected" : ""%> >ACTIVE</option>
-                  <option value="BLOCK"  <%= user.memberStatus === "BLOCK" ? "selected" : ""%> >BLOCK</option>
-                  <option value="DELETE" <%= user.memberStatus === "DELETE" ? "selected" : ""%> >DELETE</option>
-                </select>
-              </td>
-            </tbody>
-            <% }) %>
-          </table>
+        <!-- Users Table -->
+        <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB; overflow: hidden;">
+          <div style="overflow-x: auto; max-height: calc(100vh - 320px);">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead style="background: #F9FAFB; border-bottom: 1px solid #E5E7EB;">
+                <tr>
+                  <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">User</th>
+                  <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">Type</th>
+                  <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">Contact</th>
+                  <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">Points</th>
+                  <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <% if (users && users.length > 0) { %>
+                  <% users.forEach(function(user) { %>
+                    <tr style="border-bottom: 1px solid #E5E7EB;" data-user-id="<%= user._id %>">
+                      <td style="padding: 1rem 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                          <div style="width: 2.5rem; height: 2.5rem; background: #FEF3C7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <% if (user.memberImage) { %>
+                              <img src="/<%= user.memberImage %>" alt="<%= user.memberNick %>" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+                            <% } else { %>
+                              <i data-lucide="user" style="width: 1.25rem; height: 1.25rem; color: #92400E;"></i>
+                            <% } %>
+                          </div>
+                          <div>
+                            <p style="font-weight: 500; color: #111827; margin: 0;"><%= user.memberNick %></p>
+                            <p style="font-size: 0.875rem; color: #6B7280; margin: 0;"><%= user.memberEmail %></p>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="padding: 1rem 1.5rem;">
+                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: <%= user.memberType === 'ADMIN' ? '#DBEAFE' : '#F3F4F6' %>; color: <%= user.memberType === 'ADMIN' ? '#1E40AF' : '#374151' %>; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                          <%= user.memberType %>
+                        </span>
+                      </td>
+                      <td style="padding: 1rem 1.5rem;">
+                        <p style="color: #374151; margin: 0; font-size: 0.875rem;"><%= user.memberPhone %></p>
+                      </td>
+                      <td style="padding: 1rem 1.5rem;">
+                        <p style="color: #374151; margin: 0; font-weight: 500;"><%= user.memberPoints || 0 %></p>
+                      </td>
+                      <td style="padding: 1rem 1.5rem;">
+                        <select 
+                          class="status-select" 
+                          data-user-id="<%= user._id %>"
+                          style="padding: 0.25rem 0.5rem; border: 1px solid #D1D5DB; border-radius: 0.375rem; font-size: 0.875rem; outline: none; background: <%= user.memberStatus === 'ACTIVE' ? '#DEF7EC' : user.memberStatus === 'BLOCK' ? '#FEE2E2' : '#F3F4F6' %>; color: <%= user.memberStatus === 'ACTIVE' ? '#03543F' : user.memberStatus === 'BLOCK' ? '#991B1B' : '#374151' %>;"
+                        >
+                          <option value="ACTIVE" <%= user.memberStatus === 'ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+                          <option value="BLOCK" <%= user.memberStatus === 'BLOCK' ? 'selected' : '' %>>BLOCK</option>
+                          <option value="DELETE" <%= user.memberStatus === 'DELETE' ? 'selected' : '' %>>DELETE</option>
+                        </select>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="5" style="padding: 2rem; text-align: center; color: #6B7280;">
+                      No users found
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-    <% } %>
   </div>
 
-  <script type="text/javascript" src="/js/users.js"></script>
-</body>
+  <%- include('partials/scripts') %>
+  <script>
+    // Handle status change
+    document.querySelectorAll('.status-select').forEach(select => {
+      select.addEventListener('change', async function() {
+        const userId = this.getAttribute('data-user-id');
+        const newStatus = this.value;
+        
+        try {
+          const response = await fetch('/admin/users/edit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              _id: userId,
+              memberStatus: newStatus
+            })
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok) {
+            // Update background color based on status
+            if (newStatus === 'ACTIVE') {
+              this.style.background = '#DEF7EC';
+              this.style.color = '#03543F';
+            } else if (newStatus === 'BLOCK') {
+              this.style.background = '#FEE2E2';
+              this.style.color = '#991B1B';
+            } else {
+              this.style.background = '#F3F4F6';
+              this.style.color = '#374151';
+            }
+            alert('User status updated successfully');
+          } else {
+            alert('Failed to update user status');
+            location.reload();
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while updating user status');
+          location.reload();
+        }
+      });
+    });
 
-<%- include('includes/footer') %>
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#users-table-body tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

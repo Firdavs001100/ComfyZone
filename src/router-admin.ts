@@ -17,11 +17,16 @@ routerAdmin
 routerAdmin
   .get("/login", adminController.getLogin)
   .post("/login", adminController.processLogin);
+routerAdmin.get("/dashboard", adminController.getDashboard);
 routerAdmin.get("/logout", adminController.logout);
 routerAdmin.get("/check-me", adminController.checkAuthSession);
 
 /** PROVIDER */
-routerAdmin.get("/provider/all", providerController.getProvidersByAdmin);
+routerAdmin.get(
+  "/provider/all",
+  adminController.verifyAdmin,
+  providerController.getProvidersByAdmin,
+);
 routerAdmin.post(
   "/provider/create",
   adminController.verifyAdmin,
@@ -33,6 +38,11 @@ routerAdmin.post(
   adminController.verifyAdmin,
   makeUploader("providers").single("providerLogo"),
   providerController.updateProvider,
+);
+routerAdmin.post(
+  "/provider/delete/:id",
+  adminController.verifyAdmin,
+  providerController.deleteProvider,
 );
 
 /** PRODUCT */

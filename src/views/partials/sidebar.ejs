@@ -1,0 +1,60 @@
+<!-- Sidebar -->
+<aside style="width: 16rem; background: white; border-right: 1px solid #E5E7EB; display: flex; flex-direction: column;">
+  <!-- Logo -->
+  <div style="padding: 1.5rem; border-bottom: 1px solid #E5E7EB;">
+    <h1 style="font-size: 1.5rem; font-weight: bold; color: #111827; margin: 0;">Admin Panel</h1>
+  </div>
+
+  <!-- Navigation -->
+  <nav style="flex: 1; padding: 1rem; overflow-y: auto;">
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li style="margin-bottom: 0.5rem;">
+        <a href="/admin/dashboard" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; <%= currentPage === 'dashboard' ? 'background: #FEF3C7; color: #92400E;' : 'color: #374151;' %> text-decoration: none; font-weight: 500;">
+          <i data-lucide="home" style="width: 1.25rem; height: 1.25rem;"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li style="margin-bottom: 0.5rem;">
+        <a href="/admin/users/all" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; <%= currentPage === 'users' ? 'background: #FEF3C7; color: #92400E;' : 'color: #374151;' %> text-decoration: none; font-weight: 500;">
+          <i data-lucide="users" style="width: 1.25rem; height: 1.25rem;"></i>
+          <span>Users</span>
+        </a>
+      </li>
+      <li style="margin-bottom: 0.5rem;">
+        <a href="/admin/provider/all" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; <%= currentPage === 'providers' ? 'background: #FEF3C7; color: #92400E;' : 'color: #374151;' %> text-decoration: none; font-weight: 500;">
+          <i data-lucide="building-2" style="width: 1.25rem; height: 1.25rem;"></i>
+          <span>Providers</span>
+        </a>
+      </li>
+      <li>
+        <a href="/admin/product/all" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; <%= currentPage === 'products' ? 'background: #FEF3C7; color: #92400E;' : 'color: #374151;' %> text-decoration: none; font-weight: 500;">
+          <i data-lucide="package" style="width: 1.25rem; height: 1.25rem;"></i>
+          <span>Products</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- User Section -->
+  <div style="padding: 1rem; border-top: 1px solid #E5E7EB;">
+    <% if (typeof member !== 'undefined' && member) { %>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #F9FAFB; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+        <div style="width: 2.5rem; height: 2.5rem; background: #FEF3C7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <% if (member.memberImage) { %>
+            <img src="/<%= member.memberImage %>" alt="<%= member.memberNick %>" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+          <% } else { %>
+            <i data-lucide="user" style="width: 1.25rem; height: 1.25rem; color: #92400E;"></i>
+          <% } %>
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <p style="font-weight: 500; color: #111827; font-size: 0.875rem; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= member.memberNick %></p>
+          <p style="font-size: 0.75rem; color: #6B7280; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= member.memberEmail %></p>
+        </div>
+      </div>
+    <% } %>
+    <a href="/admin/logout" style="width: 100%; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; color: #DC2626; background: transparent; border: none; cursor: pointer; font-weight: 500; text-decoration: none;">
+      <i data-lucide="log-out" style="width: 1.25rem; height: 1.25rem;"></i>
+      <span>Logout</span>
+    </a>
+  </div>
+</aside>

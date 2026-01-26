@@ -33,9 +33,11 @@ providerController.createProvider = async (req: Request, res: Response) => {
       data.providerCategories = [];
     }
 
-    const result = await providerService.createProvider(data);
+    await providerService.createProvider(data);
 
-    res.status(HttpCode.OK).json(result);
+    res.send(
+      `<script>alert("Provider has succesfully been created!"); window.location.replace('/admin/provider/all')</script>`,
+    );
   } catch (err) {
     console.log("Error, createProvider:", err);
     if (err instanceof Errors) res.status(err.code).json(err);
@@ -77,9 +79,25 @@ providerController.getProvidersByAdmin = async (
 
     const result = await providerService.getProvidersByAdmin();
 
-    res.status(HttpCode.OK).json(result);
+    res.render("providers", { providers: result });
   } catch (err) {
     console.log("Error, getProvidersByAdmin:", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
+  }
+};
+
+providerController.deleteProvider = async (req: Request, res: Response) => {
+  try {
+    console.log("deleteProvider");
+    const id = req.params.id;
+    await providerService.deleteProvider(id);
+
+    res.send(
+      `<script>alert("Provider has succesfully been deleted!"); window.location.replace('/admin/provider/all')</script>`,
+    );
+  } catch (err) {
+    console.log("Error, deleteProvider:", err);
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }

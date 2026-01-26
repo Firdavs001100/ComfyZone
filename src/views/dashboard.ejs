@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>Dashboard - Admin Panel</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #F9F1E7; overflow: hidden;">
+  
+  <div style="display: flex; height: 100vh;">
+    <%- include('partials/sidebar', { currentPage: 'dashboard' }) %>
+    
+    <!-- Main Content -->
+    <div style="flex: 1; overflow: auto;">
+      <div style="padding: 2rem;">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.875rem; font-weight: bold; color: #111827; margin-bottom: 0.5rem;">Dashboard</h1>
+          <p style="color: #6B7280; margin: 0;">Welcome back! Here's an overview of your admin panel</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <!-- Total Users -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h3 style="font-size: 0.875rem; font-weight: 500; color: #6B7280; margin: 0;">Total Users</h3>
+              <div style="width: 2.5rem; height: 2.5rem; background: #FEF3C7; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="users" style="width: 1.25rem; height: 1.25rem; color: #D97706;"></i>
+              </div>
+            </div>
+            <p style="font-size: 2rem; font-weight: bold; color: #111827; margin: 0;"><%= totalUsers || 0 %></p>
+            <p style="font-size: 0.875rem; color: #10B981; margin: 0.5rem 0 0 0;">
+              <span style="font-weight: 500;">Active: <%= activeUsers || 0 %></span>
+            </p>
+          </div>
+
+          <!-- Total Providers -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h3 style="font-size: 0.875rem; font-weight: 500; color: #6B7280; margin: 0;">Total Providers</h3>
+              <div style="width: 2.5rem; height: 2.5rem; background: #DBEAFE; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="building-2" style="width: 1.25rem; height: 1.25rem; color: #2563EB;"></i>
+              </div>
+            </div>
+            <p style="font-size: 2rem; font-weight: bold; color: #111827; margin: 0;"><%= totalProviders || 0 %></p>
+            <p style="font-size: 0.875rem; color: #10B981; margin: 0.5rem 0 0 0;">
+              <span style="font-weight: 500;">Verified: <%= verifiedProviders || 0 %></span>
+            </p>
+          </div>
+
+          <!-- Total Products -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h3 style="font-size: 0.875rem; font-weight: 500; color: #6B7280; margin: 0;">Total Products</h3>
+              <div style="width: 2.5rem; height: 2.5rem; background: #D1FAE5; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="package" style="width: 1.25rem; height: 1.25rem; color: #059669;"></i>
+              </div>
+            </div>
+            <p style="font-size: 2rem; font-weight: bold; color: #111827; margin: 0;"><%= totalProducts || 0 %></p>
+            <p style="font-size: 0.875rem; color: #10B981; margin: 0.5rem 0 0 0;">
+              <span style="font-weight: 500;">Active: <%= activeProducts || 0 %></span>
+            </p>
+          </div>
+
+          <!-- Total Views -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h3 style="font-size: 0.875rem; font-weight: 500; color: #6B7280; margin: 0;">Total Product Views</h3>
+              <div style="width: 2.5rem; height: 2.5rem; background: #FCE7F3; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="eye" style="width: 1.25rem; height: 1.25rem; color: #DB2777;"></i>
+              </div>
+            </div>
+            <p style="font-size: 2rem; font-weight: bold; color: #111827; margin: 0;"><%= totalViews || 0 %></p>
+            <p style="font-size: 0.875rem; color: #6B7280; margin: 0.5rem 0 0 0;">
+              <span style="font-weight: 500;">Across all products</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Status Breakdown Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <!-- User Status Breakdown -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">User Status</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 0.75rem; height: 0.75rem; background: #10B981; border-radius: 50%;"></div>
+                  <span style="font-size: 0.875rem; color: #374151;">Active</span>
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= activeUsers || 0 %></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 0.75rem; height: 0.75rem; background: #EF4444; border-radius: 50%;"></div>
+                  <span style="font-size: 0.875rem; color: #374151;">Blocked</span>
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= blockedUsers || 0 %></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 0.75rem; height: 0.75rem; background: #6B7280; border-radius: 50%;"></div>
+                  <span style="font-size: 0.875rem; color: #374151;">Deleted</span>
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= deletedUsers || 0 %></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Status Breakdown -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">Product Status</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 0.75rem; height: 0.75rem; background: #10B981; border-radius: 50%;"></div>
+                  <span style="font-size: 0.875rem; color: #374151;">Active</span>
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= activeProducts || 0 %></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 0.75rem; height: 0.75rem; background: #F59E0B; border-radius: 50%;"></div>
+                  <span style="font-size: 0.875rem; color: #374151;">Draft</span>
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= draftProducts || 0 %></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 0.75rem; height: 0.75rem; background: #EF4444; border-radius: 50%;"></div>
+                  <span style="font-size: 0.875rem; color: #374151;">Out of Stock</span>
+                </div>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= outOfStockProducts || 0 %></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+            <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">Quick Stats</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.875rem; color: #374151;">Total Stock</span>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= totalStock || 0 %></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.875rem; color: #374151;">Discounted Items</span>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= discountedProducts || 0 %></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.875rem; color: #374151;">User Points Total</span>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #111827;"><%= totalUserPoints || 0 %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+          <div style="padding: 1.5rem; border-bottom: 1px solid #E5E7EB;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: #111827; margin: 0;">System Overview</h2>
+          </div>
+          <div style="padding: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+              <div>
+                <p style="font-size: 0.875rem; color: #6B7280; margin: 0 0 0.25rem 0;">Total Categories</p>
+                <p style="font-size: 1.5rem; font-weight: 600; color: #D97706; margin: 0;"><%= totalCategories || 9 %></p>
+              </div>
+              <div>
+                <p style="font-size: 0.875rem; color: #6B7280; margin: 0 0 0.25rem 0;">Total Product Types</p>
+                <p style="font-size: 1.5rem; font-weight: 600; color: #D97706; margin: 0;"><%= totalProductTypes || 24 %></p>
+              </div>
+              <div>
+                <p style="font-size: 0.875rem; color: #6B7280; margin: 0 0 0.25rem 0;">Avg Product Price</p>
+                <p style="font-size: 1.5rem; font-weight: 600; color: #D97706; margin: 0;">₩<%= averageProductPrice || 0 %></p>
+              </div>
+              <div>
+                <p style="font-size: 0.875rem; color: #6B7280; margin: 0 0 0.25rem 0;">Avg Rating</p>
+                <p style="font-size: 1.5rem; font-weight: 600; color: #D97706; margin: 0;"><%= averageProviderRating || 0 %>⭐</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('partials/scripts') %>
+</body>
+</html>

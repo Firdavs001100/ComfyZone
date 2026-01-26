@@ -27,6 +27,11 @@ export enum Message {
   WRONG_PASSWORD = "Wrong password, please try again!",
   NOT_AUTHENTICATED = "You're not authenticated. Please login first",
   BLOCKED_USER = "You have been blocked. Please, contact the restaurant service!",
+
+  NO_ITEM_FOUND = "Order must contain at least one item",
+  INVALID_STATUS_CHANGE = "Invalid order status change.",
+  PAYMENT_REQUIRED = "Payment is required before this order can be shipped.",
+  NO_SHIPPING_ADDRESS = "No shipping address found for this member",
 }
 
 class Errors extends Error {

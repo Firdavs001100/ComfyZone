@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { OrderStatus } from "../enums/order.enum";
+import { OrderStatus, OrderPaymentStatus } from "../enums/order.enum";
 import { Product } from "./product";
 
 export interface OrderItemInput {
@@ -11,23 +11,28 @@ export interface OrderItemInput {
 
 export interface Order {
   _id: Types.ObjectId;
+  memberId: Types.ObjectId;
+  orderStatus: OrderStatus;
+  orderPaymentStatus: OrderPaymentStatus;
+  orderShippingAddress: Record<string, any>;
   orderTotal: number;
   orderDelivery: number;
-  orderStatus: OrderStatus;
-  memberId: Types.ObjectId;
+  isDeleted: boolean;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
+
   // from aggregations
-  orderItems: OrderItem[];
-  productData: Product[];
+  orderItems?: OrderItem[];
+  productData?: Product[];
 }
 
 export interface OrderItem {
   _id: Types.ObjectId;
-  itemQuantity: number;
-  itemPrice: number;
   orderId: Types.ObjectId;
   productId: Types.ObjectId;
+  itemQuantity: number;
+  itemPrice: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,10 +40,12 @@ export interface OrderItem {
 export interface OrderInquiry {
   page: number;
   limit: number;
-  orderStatus: OrderStatus;
+  orderStatus?: OrderStatus;
+  orderPaymentStatus?: OrderPaymentStatus;
 }
 
 export interface OrderUpdateInput {
   orderId: Types.ObjectId;
-  orderStatus: OrderStatus;
+  orderStatus?: OrderStatus;
+  orderPaymentStatus?: OrderPaymentStatus;
 }

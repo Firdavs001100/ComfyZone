@@ -20,15 +20,19 @@ export interface Product {
   productImages: string[];
   productStockCount: number;
   productViews: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  productProvider: ObjectId;
+  productRating: number;
+  productTotalReviews: number;
+  productSales: number;
+  isDiscounted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ProductInput {
   productStatus?: ProductStatus;
   productName: string;
   productDesc?: string;
-  productSlug?: string;
   productPrice: number;
   productSalePrice?: number;
   productCategory: ProductCategory;
@@ -37,7 +41,7 @@ export interface ProductInput {
   productColor: string;
   productImages?: string[];
   productStockCount: number;
-  productViews?: number;
+  productProvider: ObjectId;
 }
 
 export interface ProductUpdateInput {
@@ -54,7 +58,7 @@ export interface ProductUpdateInput {
   productColor?: string;
   productImages?: string[];
   productStockCount?: number;
-  productViews?: number;
+  isDiscounted?: boolean;
 }
 
 export interface ProductInquiry {
@@ -62,5 +66,7 @@ export interface ProductInquiry {
   page: number;
   limit: number;
   productCategory?: ProductCategory;
+  productType?: ProductType;
+  productProvider?: ObjectId;
   search?: string;
 }

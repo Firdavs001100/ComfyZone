@@ -2,6 +2,7 @@ import express from "express";
 import makeUploader from "./libs/utils/uploader";
 import adminController from "./controller/admin.controller";
 import productController from "./controller/product.controller";
+import providerController from "./controller/provider.controller";
 const routerAdmin = express.Router();
 
 /** ADMIN */
@@ -18,6 +19,20 @@ routerAdmin
   .post("/login", adminController.processLogin);
 routerAdmin.get("/logout", adminController.logout);
 routerAdmin.get("/check-me", adminController.checkAuthSession);
+
+/** PROVIDER */
+routerAdmin.post(
+  "/provider/create",
+  adminController.verifyAdmin,
+  makeUploader("providers").single("providerLogo"),
+  providerController.createProvider,
+);
+routerAdmin.post(
+  "/provider/:id",
+  adminController.verifyAdmin,
+  makeUploader("providers").single("providerLogo"),
+  providerController.updateProvider,
+);
 
 /** PRODUCT */
 routerAdmin.get(

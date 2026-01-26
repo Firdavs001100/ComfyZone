@@ -1,6 +1,6 @@
 import { shapeIntoMongooseObjectId } from "../libs/config";
 import Errors, { HttpCode, Message } from "../libs/Errors";
-import { MemberType } from "../libs/enums/member.enum";
+import { MemberStatus, MemberType } from "../libs/enums/member.enum";
 import {
   LoginInput,
   Member,
@@ -18,11 +18,109 @@ class MemberService {
   }
 
   /* SPA */
+  public async signup(input: MemberInput): Promise<Member> {
+    const salt = await bcrypt.genSalt();
+    input.memberPassword = await bcrypt.hash(
+      input.memberPassword as string,
+      salt,
+    );
 
+    try {
+      const result = await this.memberModel.create(input);
+      result.memberPassword = "";
+      return result.toJSON() as Member;
+    } catch (err) {
+      console.error("Error model:signup", err);
+      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+    }
+  }
 
+  public async login(input: LoginInput): Promise<Member> {
+    const member = await this.memberModel
+      .findOne(
+        {
+          memberNick: input.memberNick,
+          memberStatus: { $ne: MemberStatus.DELETE },
+        },
+        { memberNick: 1, memberStatus: 1, memberPassword: 1 },
+      )
+      .exec();
+    if (!member) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
+    else if (member.memberStatus === MemberStatus.BLOCK) {
+      throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER);
+    }
+
+    const isMatch = await bcrypt.compare(
+      input.memberPassword as string,
+      member.memberPassword,
+    );
+
+    if (!isMatch)
+      throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
+
+    const result = await this.memberModel.findById(member._id).exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
+    return result.toJSON() as Member;
+  }
+
+  public async getMemberDetail(member: Member): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(member._id);
+    const result = await this.memberModel
+      .findOne({ _id: memberId, memberStatus: MemberStatus.ACTIVE })
+      .lean<Member>()
+      .exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result;
+  }
+
+  public async updateMember(
+    member: Member,
+    input: MemberUpdateInput,
+  ): Promise<Member> {
+    const _id = shapeIntoMongooseObjectId(member._id),
+      result = this.memberModel
+        .findOneAndUpdate({ _id }, input, {
+          new: true,
+        })
+        .lean<Member>()
+        .exec();
+    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+
+    return result;
+  }
+
+  public async getRestaurant(): Promise<Member> {
+    const result = await this.memberModel
+      .findOne({
+        memberType: MemberType.ADMIN,
+      })
+      .lean<Member>()
+      .exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result;
+  }
+
+  public async addUserPoints(member: Member, point: number): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(member._id);
+
+    return await this.memberModel
+      .findOneAndUpdate(
+        {
+          _id: memberId,
+          memberType: MemberType.USER,
+          memberStatus: MemberStatus.ACTIVE,
+        },
+        { $inc: { memberPoints: point } },
+        { new: true },
+      )
+      .lean<Member>()
+      .exec();
+  }
 
   /* BSSR */
-  
+
   // AUTH Business Logic
   public async processSignUp(input: MemberInput): Promise<Member> {
     const exist = await this.memberModel

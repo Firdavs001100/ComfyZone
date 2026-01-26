@@ -71,6 +71,32 @@ const ProductSchema = new Schema(
       type: Number,
       default: 0,
     },
+
+    productProvider: {
+      type: Schema.Types.ObjectId,
+      ref: "Provider",
+      required: true,
+    },
+
+    productRating: {
+      type: Number,
+      default: 0,
+    },
+
+    productTotalReviews: {
+      type: Number,
+      default: 0,
+    },
+
+    productSales: {
+      type: Number,
+      default: 0,
+    },
+
+    isDiscounted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
@@ -87,6 +113,7 @@ ProductSchema.index({ productName: 1, productCategory: 1 }, { unique: true });
 ProductSchema.index({ productCategory: 1 });
 ProductSchema.index({ productType: 1 });
 ProductSchema.index({ productStatus: 1 });
+ProductSchema.index({ productProvider: 1 });
 
 // Common shop query
 ProductSchema.index({ productCategory: 1, productStatus: 1 });

@@ -1,6 +1,14 @@
 export enum OrderStatus {
-  PAUSE = "PAUSE",
-  PROCESS = "PROCESS",
-  FINISH = "FINISH",
+  PENDING = "PENDING",
+  PAID = "PAID",
+  SHIPPED = "SHIPPED",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED",
   DELETE = "DELETE",
+}
+
+export enum OrderPaymentStatus {
+  UNPAID = "UNPAID",
+  PAID = "PAID",
+  REFUNDED = "REFUNDED",
 }

@@ -2,7 +2,6 @@ import { Member } from "../libs/types/member";
 import {
   Order,
   OrderInquiry,
-  OrderItem,
   OrderItemInput,
   OrderUpdateInput,
 } from "../libs/types/order";
@@ -42,7 +41,7 @@ class OrderService {
       throw new Errors(HttpCode.BAD_REQUEST, Message.NO_SHIPPING_ADDRESS);
     }
     const shippingAddress = { fullAddress: member.memberAddress };
-    
+
     const session: ClientSession = await this.orderModel.startSession();
     session.startTransaction();
 
@@ -195,6 +194,30 @@ class OrderService {
       order.orderStatus === OrderStatus.SHIPPED
     ) {
       await this.memberService.addUserPoints(member, 1);
+    }
+
+    /* Registering the sales for that product */
+    if (
+      prevStatus !== OrderStatus.DELIVERED &&
+      order.orderStatus === OrderStatus.DELIVERED
+    ) {
+      const orderItems = await this.orderItemModel
+        .find({ orderId: order._id })
+        .exec();
+
+      await this.productModel.bulkWrite(
+        orderItems.map((item) => ({
+          updateOne: {
+            filter: { _id: item.productId },
+            update: {
+              $inc: {
+                productSales: item.itemQuantity,
+                productStockCount: -item.itemQuantity,
+              },
+            },
+          },
+        })),
+      );
     }
 
     return order.toObject() as Order;

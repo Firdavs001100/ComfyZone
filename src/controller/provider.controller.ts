@@ -2,12 +2,16 @@ import { T } from "../libs/types/common";
 import { Request, Response } from "express";
 import Errors, { HttpCode, Message } from "..//libs/Errors";
 import ProviderService from "../models/Provider.service";
-import { ProviderInput, ProviderUpdateInput } from "../libs/types/provider";
+import {
+  ProviderInput,
+  ProviderInquiry,
+  ProviderUpdateInput,
+} from "../libs/types/provider";
 
 const providerController: T = {},
   providerService = new ProviderService();
 
-/** PROVIDER */
+/** ADMIN */
 providerController.createProvider = async (req: Request, res: Response) => {
   try {
     console.log("createProvider");
@@ -64,6 +68,24 @@ providerController.updateProvider = async (req: Request, res: Response) => {
   }
 };
 
+providerController.getProvidersByAdmin = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    console.log("getProvidersByAdmin");
+
+    const result = await providerService.getProvidersByAdmin();
+
+    res.status(HttpCode.OK).json(result);
+  } catch (err) {
+    console.log("Error, getProvidersByAdmin:", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
+  }
+};
+
+/** USER */
 providerController.getProvider = async (req: Request, res: Response) => {
   try {
     console.log("getProvider");
@@ -83,7 +105,22 @@ providerController.getProviders = async (req: Request, res: Response) => {
   try {
     console.log("getProviders");
 
-    const result = await providerService.getProviders();
+    const { order, page, limit, isVerified, providerCategory, search } =
+        req.query,
+      inquiry: ProviderInquiry = {
+        order: String(order),
+        page: Number(page),
+        limit: Number(limit),
+      };
+    if (isVerified !== undefined) {
+      inquiry.isVerified = isVerified === "true";
+    }
+    if (providerCategory) {
+      inquiry.providerCategory = String(providerCategory);
+    }
+    if (search) inquiry.search = String(search);
+
+    const result = await providerService.getProviders(inquiry);
 
     res.status(HttpCode.OK).json(result);
   } catch (err) {

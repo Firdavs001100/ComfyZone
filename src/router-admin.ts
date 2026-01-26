@@ -21,6 +21,7 @@ routerAdmin.get("/logout", adminController.logout);
 routerAdmin.get("/check-me", adminController.checkAuthSession);
 
 /** PROVIDER */
+routerAdmin.get("/provider/all", providerController.getProvidersByAdmin);
 routerAdmin.post(
   "/provider/create",
   adminController.verifyAdmin,

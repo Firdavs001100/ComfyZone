@@ -144,6 +144,9 @@ class ProductService {
       const result = await this.productModel.create({
         ...input,
         productSlug: slug,
+        ...(input.productSalePrice !== undefined && {
+          isDiscounted: true,
+        }),
       });
 
       return result.toObject();

@@ -43,11 +43,56 @@ class ProviderService {
   }
 
   public async getProvider(id: string): Promise<Provider> {
-    const _id = shapeIntoMongooseObjectId(id),
-      result = await this.providerModel.findById(_id).lean<Provider>().exec();
-    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    const _id = shapeIntoMongooseObjectId(id);
+    const result = await this.providerModel.aggregate([
+      {
+        $match: { _id },
+      },
+      {
+        $lookup: {
+          from: "products",
+          let: { providerId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$productProvider", "$$providerId"] },
+                productStatus: ProductStatus.ACTIVE,
+              },
+            },
+            {
+              $addFields: {
+                featuredScore: {
+                  $add: [
+                    { $multiply: ["$productSales", 0.5] },
+                    { $multiply: ["$productRating", 10] },
+                    { $multiply: ["$productTotalReviews", 0.2] },
+                    { $cond: ["$isDiscounted", 5, 0] },
+                  ],
+                },
+              },
+            },
+            { $sort: { featuredScore: -1 } },
+            { $limit: 4 },
+            {
+              $project: {
+                _id: 1,
+                productName: 1,
+                productPrice: 1,
+                productSlug: 1,
+                productImages: 1,
+                featuredScore: 1,
+              },
+            },
+          ],
+          as: "featuredProducts",
+        },
+      },
+    ]);
 
-    return result;
+    if (!result.length)
+      throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result[0];
   }
 
   public async getProviders(): Promise<Provider[]> {
@@ -86,7 +131,7 @@ class ProviderService {
                 },
               },
               { $sort: { featuredScore: -1 } },
-              { $limit: 3 },
+              { $limit: 4 },
               {
                 $project: {
                   _id: 1,

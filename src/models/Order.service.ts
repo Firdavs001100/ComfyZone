@@ -70,7 +70,7 @@ class OrderService {
         });
       }
 
-      const delivery = amount < 100000 ? 100000 : 0;
+      const delivery = amount < 150000 ? 10000 : 0;
 
       const [newOrder] = await this.orderModel.create(
         [

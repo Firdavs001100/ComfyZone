@@ -34,18 +34,28 @@ class ProductService {
       productType,
       productProvider,
       search,
+      minPrice,
+      maxPrice,
     } = inquiry;
 
-    const match: T = {
+    const match: any = {
       productStatus: ProductStatus.ACTIVE,
       ...(productCategory && { productCategory }),
       ...(productType && { productType }),
       ...(productProvider && {
         productProvider: shapeIntoMongooseObjectId(productProvider),
       }),
+      ...(minPrice !== undefined || maxPrice !== undefined
+        ? {
+            productPrice: {
+              ...(minPrice !== undefined && { $gte: minPrice }),
+              ...(maxPrice !== undefined && { $lte: maxPrice }),
+            },
+          }
+        : {}),
     };
 
-    const pipeline = [
+    const pipeline: PipelineStage[] = [
       ...(search
         ? [
             {
@@ -61,11 +71,16 @@ class ProductService {
         : []),
       { $match: match },
       {
-        $sort: order === "productPrice" ? { productPrice: 1 } : { [order]: -1 },
+        $sort:
+          order === "priceAsc"
+            ? { productPrice: 1 }
+            : order === "priceDesc"
+              ? { productPrice: -1 }
+              : { [order]: -1 },
       },
       { $skip: (page - 1) * limit },
       { $limit: limit },
-    ] as PipelineStage[];
+    ];
 
     return this.productModel.aggregate(pipeline);
   }

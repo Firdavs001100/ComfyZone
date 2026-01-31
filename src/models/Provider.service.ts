@@ -202,7 +202,7 @@ class ProviderService {
           },
         },
         { $sort: { popularityScore: -1 } },
-        { $limit: 4 },
+        { $limit: 3 },
       ]);
 
       return topProviders;

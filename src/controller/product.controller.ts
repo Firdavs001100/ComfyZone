@@ -14,42 +14,41 @@ const productController: T = {};
 /** SPA */
 productController.getProducts = async (req: Request, res: Response) => {
   try {
-    console.log("getProducts");
-
     const {
-        order,
-        page,
-        limit,
-        productCategory,
-        productType,
-        productProvider,
-        search,
-      } = req.query,
-      inquiry: ProductInquiry = {
-        order: String(order),
-        page: Number(page),
-        limit: Number(limit),
-      };
-    if (productCategory) {
-      inquiry.productCategory = productCategory as ProductCategory;
-    }
-    if (productType) {
-      inquiry.productType = productType as ProductType;
-    }
-    if (productProvider) {
+      order = "createdAt",
+      page = 1,
+      limit = 12,
+      productCategory,
+      productType,
+      productProvider,
+      search,
+      minPrice,
+      maxPrice,
+    } = req.query;
+
+    const inquiry: ProductInquiry = {
+      order: String(order),
+      page: Number(page),
+      limit: Number(limit),
+    };
+
+    if (productCategory) inquiry.productCategory = productCategory as ProductCategory;
+    if (productType) inquiry.productType = productType as ProductType;
+    if (productProvider)
       inquiry.productProvider = shapeIntoMongooseObjectId(productProvider);
-    }
     if (search) inquiry.search = String(search);
 
-    const result = await productService.getProducts(inquiry);
+    if (minPrice !== undefined) inquiry.minPrice = Number(minPrice);
+    if (maxPrice !== undefined) inquiry.maxPrice = Number(maxPrice);
 
+    const result = await productService.getProducts(inquiry);
     res.status(HttpCode.OK).json(result);
   } catch (err) {
-    console.log("Error, getProducts: ", err);
-    if (err instanceof Errors) res.status(err.code).json(err);
-    else res.status(Errors.standard.code).json(Errors.standard);
+    console.error("getProducts error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 productController.getProduct = async (req: ExtendedRequest, res: Response) => {
   try {

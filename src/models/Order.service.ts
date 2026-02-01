@@ -37,10 +37,14 @@ class OrderService {
     }
 
     const memberId = shapeIntoMongooseObjectId(member._id);
-    if (!member.memberAddress) {
+    const memberData = await this.memberService.getMemberDetail(memberId);
+    console.log("member object:", memberData);
+    console.log("member.memberAddress:", memberData.memberAddress);
+
+    if (!memberData.memberAddress) {
       throw new Errors(HttpCode.BAD_REQUEST, Message.NO_SHIPPING_ADDRESS);
     }
-    const shippingAddress = { fullAddress: member.memberAddress };
+    const shippingAddress = { fullAddress: memberData.memberAddress };
 
     const session: ClientSession = await this.orderModel.startSession();
     session.startTransaction();
@@ -148,8 +152,7 @@ class OrderService {
       ])
       .exec();
 
-    if (!result.length)
-      throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    if (!result.length) return [];
 
     return result;
   }

@@ -248,7 +248,7 @@
           <i data-lucide="x" style="width: 1.25rem; height: 1.25rem;"></i>
         </button>
       </div>
-      <form id="edit-product-form" style="display: flex; flex-direction: column; gap: 1rem;">
+      <form id="edit-product-form" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 1rem;">
         <input type="hidden" id="edit-id" />
         
         <div>
@@ -356,6 +356,36 @@
           </div>
         </div>
 
+        <!-- ===================== IMAGE MANAGEMENT SECTION ===================== -->
+        <div>
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+            Current Images
+          </label>
+
+          <!-- Existing images grid -->
+          <div id="edit-existing-images" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; min-height: 1rem;">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- New image upload -->
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+            Add New Images
+            <span id="edit-image-count-hint" style="font-weight: 400; color: #6B7280;"></span>
+          </label>
+          <input
+            type="file"
+            id="edit-new-images"
+            name="productImages"
+            accept="image/*"
+            multiple
+            style="display: block; width: 100%; padding: 0.5rem; border: 1px solid #D1D5DB; border-radius: 0.375rem; outline: none;"
+          />
+          <p style="font-size: 0.75rem; color: #6B7280; margin: 0.25rem 0 0 0;">
+            Up to 5 images total. New uploads are added to any kept existing images.
+          </p>
+        </div>
+        <!-- ================================================================== -->
+
         <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
           <button type="button" onclick="closeEditModal()" style="padding: 0.5rem 1rem; background: #6B7280; color: white; border-radius: 0.375rem; border: none; cursor: pointer;">Cancel</button>
           <button type="submit" style="padding: 0.5rem 1rem; background: #D97706; color: white; border-radius: 0.375rem; border: none; cursor: pointer;">Save Changes</button>
@@ -367,6 +397,9 @@
   <%- include('partials/scripts') %>
   <script>
     const products = <%- JSON.stringify(products) %>;
+
+    // Tracks which existing image paths the user wants to remove
+    let imagesToRemove = [];
 
     function openAddModal() {
       document.getElementById('add-modal').style.display = 'flex';
@@ -381,6 +414,9 @@
       const product = products.find(p => p._id === id);
       if (!product) return;
 
+      // Reset removal list each time the modal opens
+      imagesToRemove = [];
+
       document.getElementById('edit-id').value = product._id;
       document.getElementById('edit-name').value = product.productName;
       document.getElementById('edit-desc').value = product.productDesc || '';
@@ -394,8 +430,75 @@
       document.getElementById('edit-type').value = product.productType || '';
       document.getElementById('edit-is-discounted').checked = product.isDiscounted || false;
 
+      // Clear the new-images input
+      document.getElementById('edit-new-images').value = '';
+
+      // Render existing images
+      renderExistingImages(product.productImages || []);
+      updateImageCountHint(product.productImages || []);
+
       document.getElementById('edit-modal').style.display = 'flex';
       setTimeout(() => lucide.createIcons(), 10);
+    }
+
+    function renderExistingImages(images) {
+      const container = document.getElementById('edit-existing-images');
+      container.innerHTML = '';
+
+      if (!images || images.length === 0) {
+        container.innerHTML = '<p style="font-size:0.8rem;color:#9CA3AF;margin:0;">No images uploaded yet.</p>';
+        return;
+      }
+
+      images.forEach(function(imgPath) {
+        const isMarkedForRemoval = imagesToRemove.includes(imgPath);
+
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position:relative;width:5rem;height:5rem;border-radius:0.375rem;overflow:hidden;border:2px solid ' + (isMarkedForRemoval ? '#EF4444' : '#E5E7EB') + ';flex-shrink:0;';
+        wrapper.dataset.imgPath = imgPath;
+
+        const img = document.createElement('img');
+        img.src = '/' + imgPath;
+        img.alt = 'Product image';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;' + (isMarkedForRemoval ? 'opacity:0.35;' : '');
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.title = isMarkedForRemoval ? 'Undo remove' : 'Remove image';
+        btn.style.cssText = 'position:absolute;top:0.2rem;right:0.2rem;width:1.4rem;height:1.4rem;border-radius:9999px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:bold;background:' + (isMarkedForRemoval ? '#10B981' : '#EF4444') + ';color:white;line-height:1;';
+        btn.textContent = isMarkedForRemoval ? '↩' : '✕';
+        btn.onclick = function() { toggleImageRemoval(imgPath); };
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(btn);
+        container.appendChild(wrapper);
+      });
+    }
+
+    function toggleImageRemoval(imgPath) {
+      const idx = imagesToRemove.indexOf(imgPath);
+      if (idx === -1) {
+        imagesToRemove.push(imgPath);
+      } else {
+        imagesToRemove.splice(idx, 1);
+      }
+
+      // Re-render to reflect updated state
+      const id = document.getElementById('edit-id').value;
+      const product = products.find(p => p._id === id);
+      if (product) {
+        renderExistingImages(product.productImages || []);
+        updateImageCountHint(product.productImages || []);
+      }
+    }
+
+    function updateImageCountHint(existingImages) {
+      const kept = (existingImages || []).filter(p => !imagesToRemove.includes(p)).length;
+      const remaining = 5 - kept;
+      const hint = document.getElementById('edit-image-count-hint');
+      hint.textContent = remaining > 0
+        ? ' (up to ' + remaining + ' more)'
+        : ' (remove an existing image to add more)';
     }
 
     function closeEditModal() {
@@ -406,27 +509,37 @@
       e.preventDefault();
 
       const id = document.getElementById('edit-id').value;
-      const data = {
-        productName: document.getElementById('edit-name').value,
-        productDesc: document.getElementById('edit-desc').value,
-        productPrice: parseFloat(document.getElementById('edit-price').value),
-        productSalePrice: parseFloat(document.getElementById('edit-sale-price').value),
-        productStockCount: parseInt(document.getElementById('edit-stock').value),
-        productColor: document.getElementById('edit-color').value,
-        productMaterial: document.getElementById('edit-material').value,
-        productStatus: document.getElementById('edit-status').value,
-        productCategory: document.getElementById('edit-category').value,
-        productType: document.getElementById('edit-type').value,
-        isDiscounted: document.getElementById('edit-is-discounted').checked
-      };
+
+      // Build FormData so we can send both JSON fields and new image files together
+      const formData = new FormData();
+
+      // Text/number fields
+      formData.append('productName',       document.getElementById('edit-name').value);
+      formData.append('productDesc',       document.getElementById('edit-desc').value);
+      formData.append('productPrice',      document.getElementById('edit-price').value);
+      formData.append('productSalePrice',  document.getElementById('edit-sale-price').value);
+      formData.append('productStockCount', document.getElementById('edit-stock').value);
+      formData.append('productColor',      document.getElementById('edit-color').value);
+      formData.append('productMaterial',   document.getElementById('edit-material').value);
+      formData.append('productStatus',     document.getElementById('edit-status').value);
+      formData.append('productCategory',   document.getElementById('edit-category').value);
+      formData.append('productType',       document.getElementById('edit-type').value);
+      formData.append('isDiscounted',      document.getElementById('edit-is-discounted').checked);
+
+      // Images to remove (send as JSON array string)
+      formData.append('removeImages', JSON.stringify(imagesToRemove));
+
+      // New image files
+      const newImagesInput = document.getElementById('edit-new-images');
+      for (const file of newImagesInput.files) {
+        formData.append('productImages', file);
+      }
 
       try {
-        const response = await fetch(`/admin/product/${id}`, {
+        const response = await fetch('/admin/product/' + id, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
+          body: formData
+          // Note: do NOT set Content-Type header — the browser sets it with the correct boundary for multipart
         });
 
         const result = await response.json();
@@ -435,7 +548,7 @@
           alert('Product updated successfully!');
           location.reload();
         } else {
-          alert('Failed to update product');
+          alert('Failed to update product: ' + (result.message || 'Unknown error'));
         }
       } catch (error) {
         console.error('Error:', error);
@@ -459,19 +572,15 @@
       const data = { productStatus: status };
 
       try {
-        const response = await fetch(`/admin/product/${id}`, {
+        const response = await fetch('/admin/product/' + id, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
         const result = await response.json();
-        console.log('Response:', result);
 
         if (response.ok && result.data) {
-          // Update the select dropdown background color based on new status
           if (status === 'ACTIVE') {
             select.style.background = '#DEF7EC';
             select.style.color = '#03543F';
@@ -485,11 +594,8 @@
             select.style.color = '#374151';
             select.style.borderColor = '#D1D5DB';
           }
-          
-          console.log('Product status updated successfully!');
           alert('Product status updated successfully');
         } else {
-          console.error('Update failed:', result);
           alert('Failed to update product status');
           location.reload();
         }

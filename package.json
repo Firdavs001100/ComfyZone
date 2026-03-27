@@ -1,7 +1,7 @@
 {
-  "name": "burak",
+  "name": "comfyzone",
   "version": "1.0.0",
-  "description": "This is Burak project 0.1",
+  "description": "This is ComfyZone project",
   "main": "src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

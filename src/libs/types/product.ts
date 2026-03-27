@@ -56,8 +56,12 @@ export interface ProductUpdateInput {
   productType?: ProductType;
   productMaterial?: string;
   productColor?: string;
+  productImages?: string[];
   productStockCount?: number;
   isDiscounted?: boolean;
+
+  newImages?: string[];
+  removeImages?: string[];
 }
 
 export interface ProductInquiry {

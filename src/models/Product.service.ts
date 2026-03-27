@@ -172,25 +172,57 @@ class ProductService {
   }
 
   public async updateChosenProduct(
-    id: String,
+    id: string,
     input: ProductUpdateInput,
   ): Promise<Product> {
     id = shapeIntoMongooseObjectId(id);
+
+    // Slug logic 
     if (input.productName) {
-      input.productSlug = slugify(input.productName, {
-        lower: true,
-        strict: true,
-      });
+      const existing = await this.productModel.findById(id).lean();
+      if (existing?.productName !== input.productName) {
+        const baseSlug = slugify(input.productName, {
+          lower: true,
+          strict: true,
+        });
+        let slug = baseSlug;
+        let count = 1;
+        while (
+          await this.productModel.exists({
+            productSlug: slug,
+            _id: { $ne: id },
+          })
+        ) {
+          slug = `${baseSlug}-${count++}`;
+        }
+        input.productSlug = slug;
+      }
+    }
+
+    // Image merge logic
+    const { newImages = [], removeImages = [] } = input;
+    delete input.newImages;
+    delete input.removeImages;
+
+    if (newImages.length > 0 || removeImages.length > 0) {
+      const existing = await this.productModel.findById(id).lean();
+      const currentImages: string[] = existing?.productImages ?? [];
+
+      // Keep old images that are NOT in the removal list, then append new ones
+      const merged = [
+        ...currentImages.filter((p) => !removeImages.includes(p)),
+        ...newImages,
+      ].slice(0, 5); // enforce 5-image cap
+
+      input.productImages = merged;
     }
 
     const result = await this.productModel
-      .findOneAndUpdate({ _id: id }, input, {
-        new: true,
-      })
+      .findOneAndUpdate({ _id: id }, input, { new: true })
       .lean<Product>()
       .exec();
-    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 
+    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
     return result;
   }
 }

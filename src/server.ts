@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import app from "./app";
 
 dotenv.config();
+mongoose.set("strictQuery", true);
 
 mongoose
   .connect(process.env.MONGO_URL as string, {})
@@ -17,4 +18,3 @@ mongoose
   .catch((err) => {
     console.log("Error on connection DB: ", err);
   });
-

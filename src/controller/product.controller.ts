@@ -2,7 +2,11 @@ import { T } from "../libs/types/common";
 import { Request, Response } from "express";
 import Errors, { HttpCode, Message } from "..//libs/Errors";
 import { AdminRequest, ExtendedRequest } from "../libs/types/member";
-import { ProductInput, ProductInquiry } from "../libs/types/product";
+import {
+  ProductInput,
+  ProductInquiry,
+  ProductUpdateInput,
+} from "../libs/types/product";
 import ProductService from "../models/Product.service";
 import { ProductCategory, ProductType } from "../libs/enums/products.enum";
 import { shapeIntoMongooseObjectId } from "../libs/config";
@@ -32,7 +36,8 @@ productController.getProducts = async (req: Request, res: Response) => {
       limit: Number(limit),
     };
 
-    if (productCategory) inquiry.productCategory = productCategory as ProductCategory;
+    if (productCategory)
+      inquiry.productCategory = productCategory as ProductCategory;
     if (productType) inquiry.productType = productType as ProductType;
     if (productProvider)
       inquiry.productProvider = shapeIntoMongooseObjectId(productProvider);
@@ -48,7 +53,6 @@ productController.getProducts = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 productController.getProduct = async (req: ExtendedRequest, res: Response) => {
   try {
@@ -108,17 +112,40 @@ productController.createNewProduct = async (
   }
 };
 
-productController.updateChosenProduct = async (req: Request, res: Response) => {
+productController.updateChosenProduct = async (
+  req: AdminRequest,
+  res: Response,
+) => {
   try {
-    console.log("updateChosenProduct");
-
     const id = req.params.id;
+    const data: ProductUpdateInput = req.body;
 
-    const result = await productService.updateChosenProduct(id, req.body);
+    // Parse the list of images the user wants to remove
+    let removeImages: string[] = [];
+    if (req.body.removeImages) {
+      try {
+        removeImages = JSON.parse(req.body.removeImages);
+      } catch {
+        removeImages = [];
+      }
+    }
 
+    // Paths of newly uploaded files
+    const newImages: string[] =
+      Array.isArray(req.files) && req.files.length > 0
+        ? req.files.map((f) => f.path.replace(/\\/g, "/"))
+        : [];
+
+    data.newImages = newImages;
+    data.removeImages = removeImages;
+
+    // Remove the raw productImages field so the service doesn't
+    // accidentally overwrite the array with just the new files
+    delete data.productImages;
+
+    const result = await productService.updateChosenProduct(id, data);
     res.status(HttpCode.OK).json({ data: result });
   } catch (err) {
-    console.log("Error, updateChosenProduct: ", err);
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }

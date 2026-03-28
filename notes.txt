@@ -22,12 +22,17 @@ Project Standards:
 
 PM2 BASIC COMMANDs:
 ⤷
-    pm2 start process.config.js --env production
+    chmod +x deploy.sh  
+    ls -l deploy.sh   
+
+    BACKEND: pm2 start process.config.js --env production
+    FRONTEND: sh deploy.sh
+
 
     pm2 ls
     pm2 start dist/server.js --name=COMFYZONE
     pm2 start "npm run start:prod" --name=COMFYZONE
-    pm2 start "yarn start:prod" --name=COMFYZON-REACT
+    pm2 start "yarn run start:prod" --name=COMFYZONE-REACT
     pm2 stop id
     pm2 start id
     pm2 restart id
@@ -37,4 +42,3 @@ PM2 BASIC COMMANDs:
     pm2 stop all            ||  Stop all apps
     pm2 delete all
     pm2 kill
-

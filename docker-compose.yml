@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  comfyzone:
+    container_name: comfyzone
+    restart: always
+    image: node:20.20.0
+
+    ports:
+      - "3006:3000"
+
+    volumes:
+      - ./:/usr/src/app
+
+    working_dir: /usr/src/app
+
+    command: bash -c "npm install && npm run build && npm run start:prod"
+
+    networks:
+      - comfyzone_network
+
+networks:
+  comfyzone_network:
+    driver: bridge

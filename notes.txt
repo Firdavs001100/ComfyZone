@@ -28,6 +28,8 @@ PM2 BASIC COMMANDs:
     BACKEND: pm2 start process.config.js --env production
     FRONTEND: sh deploy.sh
 
+    at server: chmod 755 uploads
+
 
     pm2 ls
     pm2 start dist/server.js --name=COMFYZONE
@@ -42,3 +44,20 @@ PM2 BASIC COMMANDs:
     pm2 stop all            ||  Stop all apps
     pm2 delete all
     pm2 kill
+
+
+--------
+
+DOCKER BASIC COMMANDs:
+⤷
+    docker workflow
+    ⤷
+        DOCKERFILE = DOCKER IMAGE => direct docker: CONTAINER
+        DOCKERFILE => DOCKER IMAGE => docker-compose: CONTAINER
+        
+    commands:
+    docker run -d -p 3006/3000 IMAGE_NAME => creating a container (DIRECT)
+    docker compose up -d  => creating through (COMPOSE)
+    docker container stop CONTAINER_ID
+
+

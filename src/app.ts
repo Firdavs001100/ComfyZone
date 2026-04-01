@@ -62,7 +62,8 @@ const server = http.createServer(app);
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "https://comfyzone.blog",
+    origin: "https://comfyzone.blog", // frontend domain
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
